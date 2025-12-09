@@ -187,6 +187,44 @@ git push heroku main
 heroku open
 ```
 
+### Share with ngrok (Quick Live URL)
+
+**ngrok** creates a public URL that tunnels to your local server - perfect for sharing with your team!
+
+#### Quick Start:
+
+1. **Start your server** (in one terminal):
+   ```bash
+   npm start
+   ```
+
+2. **Start ngrok** (in another terminal):
+   ```bash
+   ngrok http 3000
+   ```
+
+3. **Copy the public URL** from ngrok output:
+   ```
+   Forwarding: https://xxxxx.ngrok-free.app -> http://localhost:3000
+   ```
+
+4. **Share the URL** with your team! They can access your dashboard from anywhere.
+
+#### Get ngrok URL programmatically:
+
+```bash
+# Get the current ngrok URL
+curl -s http://localhost:4040/api/tunnels | python3 -c "import sys, json; data = json.load(sys.stdin); print(data['tunnels'][0]['public_url'] if data.get('tunnels') else 'No tunnels')"
+```
+
+#### ngrok Web Interface:
+
+Visit **http://localhost:4040** to see:
+- Live request logs
+- Request/response details
+- Public URL information
+
+**Note:** Free ngrok URLs change each time you restart ngrok. For a permanent URL, upgrade to ngrok Pro or use a static domain.
 
 ## Technical Details
 
