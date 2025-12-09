@@ -616,30 +616,36 @@ function updateDashboard(data) {
     const smokeAutomationRate = smokeTotalCases > 0 ? Math.round((smokeAutomated / smokeTotalCases) * 100) : 0;
     const regressionAutomationRate = regressionTotalCases > 0 ? Math.round((regressionAutomated / regressionTotalCases) * 100) : 0;
     
+    // Helper function to safely set textContent
+    const setTextContent = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+    };
+    
     // Update summary cards
-    document.getElementById('totalTests').textContent = overall.total || 0;
-    document.getElementById('passedTests').textContent = overall.passed || 0;
-    document.getElementById('failedTests').textContent = overall.failed || 0;
-    document.getElementById('skippedTests').textContent = overall.skipped || 0;
+    setTextContent('totalTests', overall.total || 0);
+    setTextContent('passedTests', overall.passed || 0);
+    setTextContent('failedTests', overall.failed || 0);
+    setTextContent('skippedTests', overall.skipped || 0);
     
     // Update detailed breakdowns - Completed
-    document.getElementById('smokePassed').textContent = smokePassed;
-    document.getElementById('regressionPassed').textContent = regressionPassed;
-    document.getElementById('passedPercentage').textContent = `${passedPercentage}%`;
+    setTextContent('smokePassed', smokePassed);
+    setTextContent('regressionPassed', regressionPassed);
+    setTextContent('passedPercentage', `${passedPercentage}%`);
     
     // Update detailed breakdowns - In Progress
-    document.getElementById('smokeInProgress').textContent = smokeInProgress;
-    document.getElementById('regressionInProgress').textContent = regressionInProgress;
-    document.getElementById('inProgressPercentage').textContent = `${inProgressPercentage}%`;
+    setTextContent('smokeInProgress', smokeInProgress);
+    setTextContent('regressionInProgress', regressionInProgress);
+    setTextContent('inProgressPercentage', `${inProgressPercentage}%`);
     
     // Update detailed breakdowns - Yet to Start
-    document.getElementById('smokePending').textContent = smokePending;
-    document.getElementById('regressionPending').textContent = regressionPending;
-    document.getElementById('pendingPercentage').textContent = `${pendingPercentage}%`;
+    setTextContent('smokePending', smokePending);
+    setTextContent('regressionPending', regressionPending);
+    setTextContent('pendingPercentage', `${pendingPercentage}%`);
     
     // Update detailed breakdowns - Total Features
-    document.getElementById('smokeTotal').textContent = smokeTotal;
-    document.getElementById('regressionTotal').textContent = regressionTotal;
+    setTextContent('smokeTotal', smokeTotal);
+    setTextContent('regressionTotal', regressionTotal);
     
     // Update new summary cards
     const totalManualEl = document.getElementById('totalManual');
@@ -653,22 +659,22 @@ function updateDashboard(data) {
     if (automationRateEl) automationRateEl.textContent = `${overall.automationRate || 0}%`;
     
     // Update detailed breakdowns - Manual
-    document.getElementById('smokeManual').textContent = smokeManual;
-    document.getElementById('regressionManual').textContent = regressionManual;
-    document.getElementById('manualPercentage').textContent = `${manualPercentage}%`;
+    setTextContent('smokeManual', smokeManual);
+    setTextContent('regressionManual', regressionManual);
+    setTextContent('manualPercentage', `${manualPercentage}%`);
     
     // Update detailed breakdowns - Automated
-    document.getElementById('smokeAutomated').textContent = smokeAutomated;
-    document.getElementById('regressionAutomated').textContent = regressionAutomated;
-    document.getElementById('automatedPercentage').textContent = `${automatedPercentage}%`;
+    setTextContent('smokeAutomated', smokeAutomated);
+    setTextContent('regressionAutomated', regressionAutomated);
+    setTextContent('automatedPercentage', `${automatedPercentage}%`);
     
     // Update detailed breakdowns - Total Test Cases
-    document.getElementById('smokeTotalCases').textContent = smokeTotalCases;
-    document.getElementById('regressionTotalCases').textContent = regressionTotalCases;
+    setTextContent('smokeTotalCases', smokeTotalCases);
+    setTextContent('regressionTotalCases', regressionTotalCases);
     
     // Update detailed breakdowns - Automation Rate
-    document.getElementById('smokeAutomationRate').textContent = `${smokeAutomationRate}%`;
-    document.getElementById('regressionAutomationRate').textContent = `${regressionAutomationRate}%`;
+    setTextContent('smokeAutomationRate', `${smokeAutomationRate}%`);
+    setTextContent('regressionAutomationRate', `${regressionAutomationRate}%`);
 
     // Update Test Type Breakdown chart - Smoke vs Regression
     charts.passRate.data.datasets[0].data = [
@@ -1352,7 +1358,10 @@ function updateLastRefreshTime() {
         minute: '2-digit',
         second: '2-digit'
     });
-    document.getElementById('lastUpdated').textContent = timeString;
+    const lastUpdatedEl = document.getElementById('lastUpdated');
+    if (lastUpdatedEl) {
+        lastUpdatedEl.textContent = timeString;
+    }
 }
 
 // Show/hide loading state
@@ -1411,7 +1420,10 @@ let regressionTableData = [];
 // Populate Smoke Test Table
 function populateSmokeTestTable(data) {
     if (!data || !data.automationByModule) {
-        document.getElementById('smokeTestBody').innerHTML = '<tr><td colspan="6" class="loading-cell">No data available</td></tr>';
+        const smokeTestBody = document.getElementById('smokeTestBody');
+        if (smokeTestBody) {
+            smokeTestBody.innerHTML = '<tr><td colspan="6" class="loading-cell">No data available</td></tr>';
+        }
         return;
     }
 
@@ -1487,12 +1499,18 @@ function populateRegressionTestTable(data) {
 
                 renderRegressionTable(regressionTableData);
             } else {
-                document.getElementById('regressionTestBody').innerHTML = '<tr><td colspan="6" class="loading-cell">No data available</td></tr>';
+                const regressionTestBody1 = document.getElementById('regressionTestBody');
+                if (regressionTestBody1) {
+                    regressionTestBody1.innerHTML = '<tr><td colspan="6" class="loading-cell">No data available</td></tr>';
+                }
             }
         })
         .catch(error => {
             console.error('Error fetching regression data:', error);
-            document.getElementById('regressionTestBody').innerHTML = '<tr><td colspan="6" class="loading-cell">Error loading data</td></tr>';
+            const regressionTestBody2 = document.getElementById('regressionTestBody');
+            if (regressionTestBody2) {
+                regressionTestBody2.innerHTML = '<tr><td colspan="6" class="loading-cell">Error loading data</td></tr>';
+            }
         });
 }
 
