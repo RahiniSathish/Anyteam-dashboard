@@ -406,7 +406,7 @@ app.get('/api/health', (req, res) => {
     success: true, 
     status: 'ok',
     timestamp: new Date().toISOString(),
-    environment: process.env.VERCEL ? 'vercel' : 'local'
+    environment: 'local'
   });
 });
 
@@ -479,10 +479,8 @@ app.get('/api/dashboard-data', async (req, res) => {
   }
 });
 
-// Only start server if not in Vercel environment
-if (process.env.VERCEL !== '1') {
-  app.listen(PORT, () => {
-    console.log(`
+app.listen(PORT, () => {
+  console.log(`
 ╔════════════════════════════════════════════════════════════╗
 ║      Anyteam Dashboard Server - Updated & Running!        ║
 ╚════════════════════════════════════════════════════════════╝
@@ -501,8 +499,6 @@ API Endpoints:
 
 ✅ No credentials needed - using public sheet access
 `);
-  });
-}
+});
 
-// Export for Vercel serverless functions
 module.exports = app;
