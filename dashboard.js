@@ -521,16 +521,18 @@ async function loadDashboardData() {
 
         const response = await fetch(`${API_BASE_URL}/api/dashboard-data`);
         
+        // Check if response is ok
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
         // Always try to parse JSON, even for error responses
         let data;
         try {
             data = await response.json();
         } catch (parseError) {
-            // If JSON parsing fails, create a proper error response
-            if (!response.ok) {
-                throw new Error(`Server error: ${response.status} ${response.statusText}`);
-            }
-            throw parseError;
+            console.error('Failed to parse JSON response:', parseError);
+            throw new Error(`Invalid server response: ${response.status} ${response.statusText}`);
         }
 
         if (data.success) {
@@ -551,15 +553,25 @@ async function loadDashboardData() {
         }
     } catch (error) {
         console.error('Error loading dashboard data:', error);
-        let errorMsg = 'Error connecting to server. ';
+        let errorMsg = 'Error loading dashboard data. ';
         
         if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
-            errorMsg += 'Please check if the server is running on port 3000.';
-        } else if (error.message.includes('500')) {
-            errorMsg += 'Server error occurred. Check server logs for details.';
+            errorMsg += 'Unable to connect to the server. Please check your internet connection and try again.';
+        } else if (error.message.includes('HTTP 404')) {
+            errorMsg += 'API endpoint not found. Please check the deployment configuration.';
+        } else if (error.message.includes('HTTP 500') || error.message.includes('500')) {
+            errorMsg += 'Server error occurred. The Google Sheet may not be accessible. Please check Vercel logs.';
+        } else if (error.message.includes('HTTP')) {
+            errorMsg += error.message;
         } else {
             errorMsg += error.message;
         }
+        
+        console.error('Full error details:', {
+            message: error.message,
+            stack: error.stack,
+            apiUrl: `${API_BASE_URL}/api/dashboard-data`
+        });
         
         showError(errorMsg);
         showEmptyState();

@@ -400,6 +400,16 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'dashboard.html'));
 });
 
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    success: true, 
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    environment: process.env.VERCEL ? 'vercel' : 'local'
+  });
+});
+
 app.get('/api/smoke-tests', async (req, res) => {
   try {
     const { headers, data } = await fetchSheetDataAsCSV(SMOKE_TEST_GID);
@@ -422,11 +432,18 @@ app.get('/api/regression-tests', async (req, res) => {
 
 app.get('/api/dashboard-data', async (req, res) => {
   try {
+    console.log('Fetching dashboard data...');
     const smokeData = await fetchSheetDataAsCSV(SMOKE_TEST_GID);
+    console.log('Smoke test data fetched:', smokeData.headers.length, 'headers,', smokeData.data.length, 'rows');
+    
     const regressionData = await fetchSheetDataAsCSV(REGRESSION_TEST_GID);
+    console.log('Regression test data fetched:', regressionData.headers.length, 'headers,', regressionData.data.length, 'rows');
 
     const smokeMetrics = processSmokeTestData(smokeData.headers, smokeData.data);
     const regressionMetrics = processRegressionTestData(regressionData.headers, regressionData.data);
+
+    console.log('Smoke metrics:', smokeMetrics.total, 'total');
+    console.log('Regression metrics:', regressionMetrics.total, 'total');
 
     res.json({
       success: true,
@@ -453,15 +470,19 @@ app.get('/api/dashboard-data', async (req, res) => {
     });
   } catch (error) {
     console.error('Error in /api/dashboard-data:', error);
+    console.error('Error stack:', error.stack);
     res.status(200).json({
       success: false,
-      error: error.message
+      error: error.message,
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`
+// Only start server if not in Vercel environment
+if (process.env.VERCEL !== '1') {
+  app.listen(PORT, () => {
+    console.log(`
 ╔════════════════════════════════════════════════════════════╗
 ║      Anyteam Dashboard Server - Updated & Running!        ║
 ╚════════════════════════════════════════════════════════════╝
@@ -480,6 +501,8 @@ API Endpoints:
 
 ✅ No credentials needed - using public sheet access
 `);
-});
+  });
+}
 
+// Export for Vercel serverless functions
 module.exports = app;
