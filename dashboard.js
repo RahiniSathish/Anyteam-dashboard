@@ -560,7 +560,7 @@ async function loadDashboardData() {
         } else if (error.message.includes('HTTP 404')) {
             errorMsg += 'API endpoint not found. Please check the deployment configuration.';
         } else if (error.message.includes('HTTP 500') || error.message.includes('500')) {
-            errorMsg += 'Server error occurred. The Google Sheet may not be accessible. Please check Vercel logs.';
+            errorMsg += 'Server error occurred. The Google Sheet may not be accessible. Please check server logs.';
         } else if (error.message.includes('HTTP')) {
             errorMsg += error.message;
         } else {

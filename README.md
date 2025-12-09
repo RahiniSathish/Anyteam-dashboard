@@ -187,59 +187,6 @@ git push heroku main
 heroku open
 ```
 
-### Deploy to Vercel (Recommended - Easiest!)
-
-#### Option 1: Deploy via Vercel Dashboard (Easiest)
-
-1. **Go to [vercel.com](https://vercel.com)** and sign in with GitHub
-2. **Click "Add New Project"**
-3. **Import your GitHub repository**:
-   - Select `RahiniSathish/Anyteam-dashboard` from the list
-   - Or paste: `https://github.com/RahiniSathish/Anyteam-dashboard.git`
-4. **Configure Project**:
-   - Framework Preset: **Other**
-   - Root Directory: `./` (leave as default)
-   - Build Command: Leave empty (or `npm install`)
-   - Output Directory: Leave empty
-   - Install Command: `npm install`
-5. **Click "Deploy"**
-6. **Done!** Your dashboard will be live at `https://your-project.vercel.app`
-
-#### Option 2: Deploy via Vercel CLI
-
-```bash
-# Install Vercel CLI
-npm install -g vercel
-
-# Login to Vercel
-vercel login
-
-# Deploy (from project directory)
-cd "/Users/apple/Documents/Dashboard Anyteam"
-vercel
-
-# Follow the prompts:
-# - Set up and deploy? Yes
-# - Which scope? (select your account)
-# - Link to existing project? No
-# - Project name? anyteam-dashboard (or press Enter for default)
-# - Directory? ./
-# - Override settings? No
-
-# For production deployment
-vercel --prod
-```
-
-**That's it!** Your dashboard will be live and automatically deployed on every push to GitHub.
-
-#### Vercel Configuration
-
-The project includes a `vercel.json` file that configures:
-- Serverless function routing for Express
-- API routes handling
-- Static file serving
-
-No additional configuration needed! 🎉
 
 ## Technical Details
 
