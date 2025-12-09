@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anyteam - Test Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <h1>Anyteam Testing Dashboard</h1>
+                    <p class="subtitle">Real-time Test Execution Monitoring</p>
+                </div>
+                <div class="header-info">
+                    <div class="last-updated">
+                        <span class="label">Last Updated:</span>
+                        <span id="lastUpdated" class="value">--:--</span>
+                    </div>
+                    <button id="themeToggle" class="theme-toggle-btn" title="Toggle Dark/Light Theme">
+                        <svg id="themeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="12" cy="12" r="5"/>
+                            <line x1="12" y1="1" x2="12" y2="3"/>
+                            <line x1="12" y1="21" x2="12" y2="23"/>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                            <line x1="1" y1="12" x2="3" y2="12"/>
+                            <line x1="21" y1="12" x2="23" y2="12"/>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                        </svg>
+                    </button>
+                    <button id="refreshBtn" class="refresh-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M23 4v6h-6M1 20v-6h6"/>
+                            <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+                        </svg>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Summary Cards - Reordered -->
+        <div class="summary-grid">
+            <!-- 1. Total Test Cases - Hero Card -->
+            <div class="card summary-card hero-card gradient-orange">
+                <div class="card-icon orange">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h3>Total Test Cases</h3>
+                    <p class="metric-value" id="totalTestCases">0</p>
+                    <p class="metric-label">Manual + Automated</p>
+                    <div class="metric-breakdown">
+                        <span class="breakdown-item">Smoke: <strong id="smokeTotalCases">0</strong></span>
+                        <span class="breakdown-item">Regression: <strong id="regressionTotalCases">0</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Total Features - Hero Card -->
+            <div class="card summary-card hero-card gradient-info">
+                <div class="card-icon info">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h3>Total Features</h3>
+                    <p class="metric-value" id="totalTests">0</p>
+                    <p class="metric-label">All Test Suites</p>
+                    <div class="metric-breakdown">
+                        <span class="breakdown-item">Smoke Tests: <strong id="smokeTotal">0</strong></span>
+                        <span class="breakdown-item">Regression: <strong id="regressionTotal">0</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Manual Test Cases - Flash Card -->
+            <div class="card summary-card flash-card gradient-purple">
+                <div class="card-icon purple">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                        <line x1="8" y1="21" x2="16" y2="21"/>
+                        <line x1="12" y1="17" x2="12" y2="21"/>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h3>Manual Test Cases</h3>
+                    <p class="metric-value" id="totalManual">0</p>
+                    <p class="metric-label">Manual TCs</p>
+                    <div class="metric-breakdown">
+                        <span class="breakdown-item">Smoke: <strong id="smokeManual">0</strong></span>
+                        <span class="breakdown-item">Regression: <strong id="regressionManual">0</strong></span>
+                        <span class="breakdown-percentage" id="manualPercentage">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Automated Test Cases - Flash Card -->
+            <div class="card summary-card flash-card gradient-teal">
+                <div class="card-icon teal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h3>Automated Test Cases</h3>
+                    <p class="metric-value" id="totalAutomated">0</p>
+                    <p class="metric-label">Automated TCs</p>
+                    <div class="metric-breakdown">
+                        <span class="breakdown-item">Smoke: <strong id="smokeAutomated">0</strong></span>
+                        <span class="breakdown-item">Regression: <strong id="regressionAutomated">0</strong></span>
+                        <span class="breakdown-percentage" id="automatedPercentage">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Completed (Done) - Mini Card -->
+            <div class="card summary-card mini-card gradient-success">
+                <div class="card-icon success">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h3>Completed (Done)</h3>
+                    <p class="metric-value" id="passedTests">0</p>
+                    <p class="metric-label">Total Completed</p>
+                    <div class="metric-breakdown">
+                        <span class="breakdown-item">Smoke: <strong id="smokePassed">0</strong></span>
+                        <span class="breakdown-item">Regression: <strong id="regressionPassed">0</strong></span>
+                        <span class="breakdown-percentage" id="passedPercentage">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. In Progress - Mini Card -->
+            <div class="card summary-card mini-card gradient-warning">
+                <div class="card-icon warning">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h3>In Progress</h3>
+                    <p class="metric-value" id="skippedTests">0</p>
+                    <p class="metric-label">Currently Working</p>
+                    <div class="metric-breakdown">
+                        <span class="breakdown-item">Smoke: <strong id="smokeInProgress">0</strong></span>
+                        <span class="breakdown-item">Regression: <strong id="regressionInProgress">0</strong></span>
+                        <span class="breakdown-percentage" id="inProgressPercentage">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7. Yet to Start - Mini Card -->
+            <div class="card summary-card mini-card gradient-danger">
+                <div class="card-icon failed">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h3>Yet to Start</h3>
+                    <p class="metric-value" id="failedTests">0</p>
+                    <p class="metric-label">Pending Tasks</p>
+                    <div class="metric-breakdown">
+                        <span class="breakdown-item">Smoke: <strong id="smokePending">0</strong></span>
+                        <span class="breakdown-item">Regression: <strong id="regressionPending">0</strong></span>
+                        <span class="breakdown-percentage" id="pendingPercentage">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-grid">
+            <!-- Pass Rate Chart -->
+            <div class="card chart-card">
+                <div class="card-header">
+                    <h2>Test Type Breakdown</h2>
+                    <p class="chart-subtitle">Smoke vs Regression test distribution</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="passRateChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Test Status by Type -->
+            <div class="card chart-card">
+                <div class="card-header">
+                    <h2>Test Status by Type</h2>
+                    <p class="chart-subtitle">Breakdown of Done, In Progress, and Yet to Start across test types</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="distributionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Status Breakdown -->
+            <div class="card chart-card">
+                <div class="card-header">
+                    <h2>Automation Status Breakdown</h2>
+                    <p class="chart-subtitle">Status distribution across all test cases</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Automation Analysis -->
+            <div class="card chart-card">
+                <div class="card-header">
+                    <h2>Manual vs Automated</h2>
+                </div>
+                <div class="chart-container">
+                    <canvas id="automationChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Features with Manual vs Automated -->
+            <div class="card chart-card full-width">
+                <div class="card-header">
+                    <div>
+                        <h2>Total Cases and Automated Case</h2>
+                        <p class="chart-subtitle">Stacked view of total test cases and automated cases across all features (Top 15 by total test cases)</p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="moduleChart"></canvas>
+                </div>
+                <div class="chart-footer">
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #10b981;"></span>
+                        <span>Total Cases</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #a855f7;"></span>
+                        <span>Automated Case</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Test Tables Section -->
+        <div class="tables-section">
+            <!-- Smoke Test Table -->
+            <div class="card table-card">
+                <div class="table-header">
+                    <div>
+                        <h2>Smoke Test - Happy Path Scenarios</h2>
+                        <p class="table-subtitle">Detailed view of all smoke test cases</p>
+                    </div>
+                    <div class="table-controls">
+                        <input type="text" id="smokeSearchInput" class="search-input" placeholder="Search smoke tests...">
+                        <select id="smokeStatusFilter" class="filter-select">
+                            <option value="all">All Status</option>
+                            <option value="done">Done</option>
+                            <option value="inprogress">In Progress</option>
+                            <option value="yet to start">Yet to Start</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table id="smokeTestTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Test Case</th>
+                                <th>Manual TCs</th>
+                                <th>Automated TCs</th>
+                                <th>Automation %</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="smokeTestBody">
+                            <tr>
+                                <td colspan="6" class="loading-cell">Loading data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Regression Test Table -->
+            <div class="card table-card">
+                <div class="table-header">
+                    <div>
+                        <h2>Regression Test Cases</h2>
+                        <p class="table-subtitle">Detailed view of all regression test stories</p>
+                    </div>
+                    <div class="table-controls">
+                        <input type="text" id="regressionSearchInput" class="search-input" placeholder="Search regression tests...">
+                        <select id="regressionStatusFilter" class="filter-select">
+                            <option value="all">All Status</option>
+                            <option value="in progress">In Progress</option>
+                            <option value="not started">Not Started</option>
+                            <option value="done">Done</option>
+                        </select>
+                        <select id="regressionPriorityFilter" class="filter-select">
+                            <option value="all">All Priority</option>
+                            <option value="P0">P0</option>
+                            <option value="P1">P1</option>
+                            <option value="P2">P2</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table id="regressionTestTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Story</th>
+                                <th>Total Cases</th>
+                                <th>Priority</th>
+                                <th>Automated Cases</th>
+                                <th>Automation %</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="regressionTestBody">
+                            <tr>
+                                <td colspan="6" class="loading-cell">Loading data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2025 Anyteam. Dashboard auto-refreshes every 5 minutes.</p>
+        </footer>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
